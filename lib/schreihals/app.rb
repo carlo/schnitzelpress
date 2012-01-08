@@ -68,10 +68,9 @@ module Schreihals
     end
 
     def latest_posts
-      posts = Post.documents.select { |p| p.date.present? }
-      posts = posts.select { |p| p.published? } if production?
-      posts = posts.sort { |a, b| b.date <=> a.date }
-      posts.first(10)
+      posts = Post.documents.select(&:date)
+      posts = posts.select(&:published?) if production?
+      posts.sort_by(&:date).reverse.first(10)
     end
 
     not_found do
