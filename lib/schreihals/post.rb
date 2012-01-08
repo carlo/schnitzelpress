@@ -5,16 +5,18 @@ module Schreihals
     def initialize(*args)
       super
       self.attributes = {
-        'disqus' => true,
-        'status' => 'published',
-        'summary' => nil,
-        'link' => nil,
+        'disqus'    => true,
+        'status'    => 'published',
+        'summary'   => nil,
+        'link'      => nil,
         'read_more' => nil,
-        'date' => nil,
-        'title' => nil,
-        'slug' => nil
+        'date'      => nil,
+        'title'     => nil,
+        'slug'      => nil,
+        'disqus_identifier' => file_name
       }.merge(attributes)
 
+      # extract date and slug from file name, if possible
       if file_name_without_extension =~ /^(\d{4}-\d{1,2}-\d{1,2})-?(.+)$/
         attributes['date'] ||= Date.parse($1)
         attributes['slug'] ||= $2
@@ -37,10 +39,6 @@ module Schreihals
 
     def to_url
       date.present? ? "/#{year}/#{month}/#{day}/#{slug}/" : "/#{slug}/"
-    end
-
-    def disqus_identifier
-      attributes['disqus_identifier'] || file_name
     end
 
     def disqus?
