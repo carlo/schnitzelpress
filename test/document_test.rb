@@ -17,11 +17,17 @@ context Schreihals::Document do
     asserts("automatically converts datetimes into Time objects") { topic.datetime.kind_of? Time }
   end
 
+  asserts "#from_file should call #from_string with the contents of the file" do
+    mock.proxy(topic).from_string(test_document_contents, { 'file_name' => 'simple_document.md' })
+    topic.from_file(test_document_filename)
+  end.kind_of?(Schreihals::Document)
+
   context "#from_file" do
-    should "call #from_string with the contents of the file" do
-      mock.proxy(topic).from_string(test_document_contents)
-      topic.from_file(test_document_filename)
-    end.kind_of?(Schreihals::Document)
+    setup { topic.from_file(test_document_filename) }
+
+    asserts(:file_name).equals "simple_document.md"
+    asserts(:file_name_without_extension).equals "simple_document"
+    asserts(:file_extension).equals "md"
   end
 
   context "#from_directory" do

@@ -33,11 +33,10 @@ module Schreihals
     def refresh_documents!
       case settings.documents_store
       when :filesystem
-        Post.send(:include, DocumentMapper::FilesystemStore)
-        Post.load_documents_from_filesystem(settings.documents_source)
-      when :dropbox
-        Post.send(:include, DocumentMapper::DropboxStore)
-        Post.load_documents_from_dropbox(settings.documents_source, :cache => settings.documents_cache)
+        Post.from_directory(settings.documents_source)
+      # when :dropbox
+      #   Post.send(:include, DocumentMapper::DropboxStore)
+      #   Post.load_documents_from_dropbox(settings.documents_source, :cache => settings.documents_cache)
       else
         raise "Unknown documents store '#{settings.documents_store}'."
       end
@@ -49,9 +48,8 @@ module Schreihals
     end
 
     get '/' do
-      @posts = Post.order_by(:date => :desc)
-      @posts = @posts.where(:status => 'published') if production?
-      @posts = @posts.limit(10).all
+      @posts = latest_posts
+
       @show_description = true
       haml :index
     end
@@ -61,11 +59,11 @@ module Schreihals
     end
 
     get '/atom.xml' do
-      @posts = Post.where(:status => 'published').order_by(:date => :desc).limit(10).all
+      @posts = latest_posts
+
       xml = haml :atom, :layout => false
 
       doc = Nokogiri::XML(xml)
-
       doc.css("content img").each do |node|
         node['src'] = absolutionize(node['src'])
       end
@@ -83,7 +81,7 @@ module Schreihals
     end
 
     def render_page(slug)
-      if @post = Post.where(:slug => slug).first
+      if @post = Post.documents.detect { |p| p.slug == slug }
         haml :post
       else
         halt 404
@@ -104,6 +102,13 @@ module Schreihals
 
     def base_url
       "#{env['rack.url_scheme']}://#{env['HTTP_HOST']}"
+    end
+
+    def latest_posts
+      posts = Post.documents.select { |p| p.date.present? }
+      posts = posts.select { |p| p.published? } if production?
+      posts = posts.sort { |a, b| b.date <=> a.date }
+      posts.first(10)
     end
 
     not_found do

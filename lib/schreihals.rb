@@ -5,11 +5,12 @@ require 'haml'
 require 'sass'
 require 'redcarpet'
 require 'schnitzelstyle'
-require 'document_mapper'
 require 'rack-cache'
 require 'coderay'
 require 'rack/codehighlighter'
+
 require 'active_support/core_ext/string/inflections'
+require 'active_support/core_ext/class'
 
 require 'schreihals/static'
 require 'schreihals/helpers'
