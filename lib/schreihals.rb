@@ -13,6 +13,7 @@ require 'active_support/core_ext/string/inflections'
 
 require 'schreihals/static'
 require 'schreihals/helpers'
+require 'schreihals/document'
 require 'schreihals/post'
 require 'schreihals/app'
 
