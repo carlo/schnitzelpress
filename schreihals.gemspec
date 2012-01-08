@@ -31,7 +31,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'i18n'
   gem.add_dependency 'tilt', '~> 1.3.0'
 
-
+  gem.add_development_dependency 'rake'
   gem.add_development_dependency 'riot'
   gem.add_development_dependency 'rack-test'
   gem.add_development_dependency 'watchr'
