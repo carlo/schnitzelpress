@@ -44,7 +44,7 @@ module Schreihals
     end
 
     def render_page(slug)
-      if @post = Post.documents.detect { |p| p.slug == slug }
+      if @post = Post.with_slug(slug)
         haml :post
       else
         halt 404
@@ -65,12 +65,6 @@ module Schreihals
 
     def base_url
       "#{env['rack.url_scheme']}://#{env['HTTP_HOST']}"
-    end
-
-    def latest_posts
-      posts = Post.documents.select(&:date)
-      posts = posts.select(&:published?) if production?
-      posts.sort_by(&:date).reverse.first(10)
     end
 
     not_found do

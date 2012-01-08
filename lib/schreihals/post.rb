@@ -58,5 +58,19 @@ module Schreihals
     def page?
       !post?
     end
+
+    class << self
+      def latest(options = {})
+        options = {published_only: false}.merge(options)
+
+        posts = documents.select(&:date)
+        posts = posts.select(&:published?) if options[:published_only]
+        posts.sort_by(&:date).reverse.first(10)
+      end
+
+      def with_slug(slug)
+        documents.detect { |p| p.slug == slug }
+      end
+    end
   end
 end

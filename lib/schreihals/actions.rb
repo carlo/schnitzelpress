@@ -9,7 +9,7 @@ module Schreihals
       end
 
       get '/' do
-        @posts = latest_posts
+        @posts = Post.latest(published_only: production?)
 
         @show_description = true
         haml :index
@@ -20,7 +20,7 @@ module Schreihals
       end
 
       get '/atom.xml' do
-        @posts = latest_posts
+        @posts = Post.latest(published_only: production?)
 
         xml = haml :atom, :layout => false
 
