@@ -12,6 +12,7 @@ module Schreihals
     end
 
     def self.from_file(name)
+      from_string(open(name).read)
     end
 
     def self.split_original_document(s)
