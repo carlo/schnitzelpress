@@ -12,6 +12,8 @@ context Schreihals::Document do
     asserts(:class).equals Schreihals::Document
     asserts(:body).equals "This is the body."
     asserts(:title).equals "This is the title"
+    asserts("automatically converts dates into Date objects") { topic.date.kind_of? Date }
+    asserts("automatically converts datetimes into Time objects") { topic.datetime.kind_of? Time }
   end
 
   context "#from_file" do
