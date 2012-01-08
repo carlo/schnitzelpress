@@ -15,6 +15,10 @@ module Schreihals
       from_string(open(name).read)
     end
 
+    def self.from_directory(dir)
+      Dir[File.join(dir, "*")].collect { |f| from_file f }
+    end
+
     def self.split_original_document(s)
       s =~ /(.*)---\n(.*)\n---\n(.*)/m ? [$2, $3] : [nil, s]
     end

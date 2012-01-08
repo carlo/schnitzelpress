@@ -1,8 +1,9 @@
 require_relative 'test_helper'
 
 context Schreihals::Document do
-  helper(:test_document_filename) { File.expand_path('../files/simple_document.md', __FILE__) }
-  helper(:test_document_contents) { open(File.expand_path('../files/simple_document.md', __FILE__)).read }
+  helper(:test_document_directory) { File.expand_path('../files/', __FILE__) }
+  helper(:test_document_filename) { File.join(test_document_directory, 'simple_document.md')  }
+  helper(:test_document_contents) { open(test_document_filename).read }
 
   setup { Schreihals::Document }
 
@@ -20,6 +21,15 @@ context Schreihals::Document do
     should "call #from_string with the contents of the file" do
       mock.proxy(topic).from_string(test_document_contents)
       topic.from_file(test_document_filename)
-    end
+    end.kind_of?(Schreihals::Document)
+  end
+
+  context "#from_directory" do
+    should "call #from_file for each file contained in the directory" do
+      Dir[File.join(test_document_directory, "*")].each do |f|
+        mock.proxy(topic).from_file(f)
+      end
+      topic.from_directory(test_document_directory)
+    end.kind_of?(Array)
   end
 end
