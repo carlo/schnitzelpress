@@ -34,10 +34,9 @@ module Schreihals
     def refresh_documents!
       case settings.documents_store
       when :filesystem
-        Post.from_directory(settings.documents_source)
+        Post.load_from_directory(settings.documents_source)
       # when :dropbox
-      #   Post.send(:include, DocumentMapper::DropboxStore)
-      #   Post.load_documents_from_dropbox(settings.documents_source, :cache => settings.documents_cache)
+      #   Post.load_from_dropbox(settings.documents_source)
       else
         raise "Unknown documents store '#{settings.documents_store}'."
       end
